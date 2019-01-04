@@ -1,0 +1,48 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: '2018-12-31T14:09:33Z'
+  labels:
+    app: mysample
+  name: mysample
+  namespace: web-project
+  resourceVersion: '32359'
+  selfLink: /apis/build.openshift.io/v1/namespaces/web-project/buildconfigs/mysample
+  uid: b2c85033-0d05-11e9-a501-08002770e895
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'mysample:latest'
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    git:
+      ref: master
+      uri: 'https://github.com/sarguna19/SampleWebApplication.git'
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'wildfly:latest'
+        namespace: openshift
+    type: Source
+  triggers:
+    - github:
+        secret: sKmU0YETPA-lRyVOGqgC
+      type: GitHub
+    - generic:
+        secret: WvnhYmfzhjAayLdDy7AK
+      type: Generic
+    - type: ConfigChange
+    - imageChange:
+        lastTriggeredImageID: >-
+          172.30.1.1:5000/openshift/wildfly@sha256:0b819c173b9d9e54227c82310566d37a905e09f8f922a1f4f3790ede76341412
+      type: ImageChange
+status:
+  lastVersion: 1

@@ -1,6 +1,7 @@
 node('maven') {
   stage('Build') {
     git url: "https://github.com/sarguna19/SampleWebApplication.git"
+    git refspec: '+refs/pull-requests/*:refs/remotes/origin/pr/*'
     sh "mvn package"
     stash name:"war", includes:"target/SampleWebApplication.war"
   }

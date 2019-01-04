@@ -1,7 +1,6 @@
 node('maven') {
   stage('Build') {
     git url: "https://github.com/sarguna19/SampleWebApplication.git"
-    sh "git clean -f && git reset --hard origin/master"
     sh "mvn package"
     stash name:"war", includes:"target/SampleWebApplication.war"
   }

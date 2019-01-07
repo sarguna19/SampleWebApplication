@@ -1,0 +1,151 @@
+apiVersion: v1
+kind: Template
+metadata:
+  annotations:
+    iconClass: icon-java
+  name: sample
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: sample
+    labels:
+      application: sample
+  spec:
+    tags:
+    - name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: sample
+    labels:
+      application: sample
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: sample:latest
+    source:
+      git:
+        ref: ${GIT_REF}
+        uri: ${GIT_URI}
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        from:
+          kind: ImageStreamTag
+          name: redhat-openjdk18-openshift:1.0
+          namespace: ${IMAGE_STREAM_NAMESPACE}
+      type: Source
+    triggers:
+    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: sample
+    labels:
+      application: sample
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: sample
+    strategy:
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: sample
+          deploymentconfig: sample
+        name: sample
+      spec:
+        containers:
+          image: sample
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 45
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: sample
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 1
+            requests:
+              memory: 512Mi
+              cpu: 200m
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 75
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sample
+        from:
+          kind: ImageStreamTag
+          name: sample:latest
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: sample
+      application: sample
+    name: sample
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: sample
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      application: sample
+    name: sample
+  spec:
+    to:
+      kind: Service
+      name: sample
+      weight: 100
+parameters:
+- displayName: Application name
+  name: APPLICATION_NAME
+  required: true
+  value: sample
+- description: Git source URI for application
+  displayName: Git source repository
+  name: GIT_URI
+  required: true
+  value: https://github.com/sarguna19/SampleWebApplication.git
+- description: Git branch/tag reference
+  displayName: Git branch/tag reference
+  name: GIT_REF
+  value: master
+- description: Maven mirror url. If nexus is deployed locally, use nexus url (e.g. http://nexus.ci:8081/content/groups/public/)
+  displayName: Maven mirror url
+  name: MAVEN_MIRROR_URL
+- displayName: ImageStream Namespace
+  description: Namespace in which the ImageStreams for Red Hat OpenJDK image is installed. These ImageStreams are normally installed in the openshift namespace. You should only need to modify this if you've installed the ImageStreams in a different namespace/project.
+  name: IMAGE_STREAM_NAMESPACE
+  required: true
+  value: openshift

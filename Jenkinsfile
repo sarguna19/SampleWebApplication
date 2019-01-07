@@ -7,7 +7,7 @@ node('maven') {
  
   stage('Build Image') {
     unstash name:"war"
-    sh "oc start-build sample --from-file=/tmp/workspace/my-jenkins/my-jenkins-sample-service-pipeline/target/SampleWebApplication.war --follow"
+    sh "oc start-build sample --from-file=target/SampleWebApplication.war -n my-jenkins"
   }
   stage('Deploy') {
     openshiftDeploy depCfg: 'sample'

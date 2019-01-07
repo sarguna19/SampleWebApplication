@@ -12,7 +12,7 @@ items:
     source:
       git:
         ref: pipeline
-        uri: https://github.com/sarguna19/SampleWebApplication.git
+        uri: git://github.com/sarguna19/SampleWebApplication.git
       type: Git
     strategy:
       type: JenkinsPipeline

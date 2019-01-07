@@ -7,7 +7,7 @@ node('maven') {
  
   stage('Build Image') {
     unstash name:"war"
-    sh "oc start-build sample-docker --from-file=target/SampleWebApplication.war -n maven"
+    sh "oc start-build sample --from-file=target/SampleWebApplication.war -n maven"
   }
   stage('Deploy') {
     openshiftDeploy depCfg: 'sample'

@@ -1,7 +1,4 @@
 node('maven') {
-  triggers {
-    cron('H 4/* 0 0 1-5')
-  }
   stage('Build') {
     git url: "git://github.com/sarguna19/SampleWebApplication.git"
     sh "mvn package"

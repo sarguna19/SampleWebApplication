@@ -1,4 +1,9 @@
-node('maven') {
+pipeline {
+ agent any
+    triggers {
+        cron('H 4/* 0 0 1-5')
+    }
+  node('maven') {
   stage('Build') {
     git url: "git://github.com/sarguna19/SampleWebApplication.git"
     sh "mvn package"
@@ -17,4 +22,5 @@ node('maven') {
   stage('System Test') {
     sh "curl -s -X GET http://sample-first-project.192.168.99.100.nip.io/SampleWebApplication/"
   }
+}
 }

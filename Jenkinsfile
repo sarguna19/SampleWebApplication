@@ -7,13 +7,15 @@ node('maven') {
  
   stage('Build Image') {
     unstash name:"war"
+    sh "oc new-app wildfly:latest~. --name sample"
     sh "oc start-build sample --from-file=target/SampleWebApplication.war --follow"
   }
   stage('Deploy') {
     openshiftDeploy depCfg: 'sample'
     openshiftVerifyDeployment depCfg: 'sample', replicaCount: 1, verifyReplicaCount: true
+    sh "oc expose svc sample"
   }
   stage('System Test') {
-    sh "curl -s -X POST http://sample:8080/SampleWebApplication/"
+    sh "curl -s -X GET http://sample-first-project.192.168.99.100.nip.io/SampleWebApplication/"
   }
 }

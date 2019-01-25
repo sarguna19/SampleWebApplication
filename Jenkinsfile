@@ -8,7 +8,7 @@ node('maven') {
   stage('Build Image') {
     unstash name:"war"
     sh "oc new-app wildfly:latest~. --name sample"
-    sh "oc start-build sample --from-file=target/SampleWebApplication.war --follow"
+    sh "oc start-build sample --from-file=target/SampleWebApplication.war --follow=true --wait=true"
   }
   stage('Deploy') {
     openshiftDeploy depCfg: 'sample'

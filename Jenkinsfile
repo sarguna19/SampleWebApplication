@@ -15,7 +15,6 @@ node('maven') {
   stage('Deploy') {
     openshiftDeploy depCfg: 'sample'
     openshiftVerifyDeployment depCfg: 'sample', replicaCount: 1, verifyReplicaCount: true
-    sh "oc expose svc sample"
   }
   stage('System Test') {
     sh "curl -s -X GET http://sample-first-project.192.168.99.100.nip.io/SampleWebApplication/"

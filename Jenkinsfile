@@ -1,6 +1,6 @@
 node('maven') {
  properties([
-            pipelineTriggers([cron('H 4/* 0 0 1-5')]),
+            pipelineTriggers([cron('* * * * *')]),
         ])
   stage('Build') {
     git url: "git://github.com/sarguna19/SampleWebApplication.git"

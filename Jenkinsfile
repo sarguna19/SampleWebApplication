@@ -1,4 +1,5 @@
 node('maven') {
+  properties([pipelineTriggers([pollSCM('')])])
   stage('Build') {
     git url: "git://github.com/sarguna19/SampleWebApplication.git"
     sh "mvn package"

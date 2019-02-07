@@ -11,7 +11,7 @@ items:
   spec:
     source:
       git:
-        ref: pipeline
+        ref: master
         uri: git://github.com/sarguna19/SampleWebApplication.git
       type: Git
     strategy:

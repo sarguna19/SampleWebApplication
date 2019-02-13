@@ -7,13 +7,13 @@ node('maven') {
  
   stage('Build Image') {
     unstash name:"war"
-    sh "oc start-build sample --from-file=target/SampleWebApplication.war --follow=true --wait=true"
+    sh "oc start-build webapp --from-file=target/SampleWebApplication.war --follow=true --wait=true"
   }
   stage('Deploy') {
-    openshiftDeploy depCfg: 'sample'
-    openshiftVerifyDeployment depCfg: 'sample', replicaCount: 1, verifyReplicaCount: true
+    openshiftDeploy depCfg: 'webapp'
+    openshiftVerifyDeployment depCfg: 'webapp', replicaCount: 1, verifyReplicaCount: true
   }
   stage('System Test') {
-    sh "curl -s -X GET http://sample-first-project.192.168.99.100.nip.io/SampleWebApplication/"
+    sh "curl -s -X GET http://webapp-twg-demo.192.168.99.100.nip.io/SampleWebApplication/"
   }
 }
